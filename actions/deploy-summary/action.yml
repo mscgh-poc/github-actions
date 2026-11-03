@@ -1,0 +1,40 @@
+name: 'Deploy Summary'
+description: 'Genera un Job Summary estandarizado con los datos del despliegue'
+
+inputs:
+  image-tag:
+    description: 'Tag completo de la imagen desplegada (registry/repo:tag)'
+    required: true
+  commit-sha:
+    description: 'SHA del commit desplegado'
+    required: true
+  run-number:
+    description: 'Número de ejecución del workflow'
+    required: true
+  namespace:
+    description: 'Namespace de Kubernetes donde se desplegó'
+    required: true
+  environment:
+    description: 'Ambiente de despliegue (dev/prod)'
+    required: true
+  app-url:
+    description: 'URL de la aplicación (si está disponible)'
+    required: false
+    default: 'Pendiente de asignación'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Generate deployment summary
+      shell: bash
+      run: |
+        echo "### Despliegue completado - ${{ inputs.environment }}" >> "$GITHUB_STEP_SUMMARY"
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo "| Recurso | Detalle |" >> "$GITHUB_STEP_SUMMARY"
+        echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+        echo "| **Ambiente** | \`${{ inputs.environment }}\` |" >> "$GITHUB_STEP_SUMMARY"
+        echo "| **Imagen** | \`${{ inputs.image-tag }}\` |" >> "$GITHUB_STEP_SUMMARY"
+        echo "| **Commit** | \`${{ inputs.commit-sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
+        echo "| **Run** | \`#${{ inputs.run-number }}\` |" >> "$GITHUB_STEP_SUMMARY"
+        echo "| **Namespace** | \`${{ inputs.namespace }}\` |" >> "$GITHUB_STEP_SUMMARY"
+        echo "| **URL** | ${{ inputs.app-url }} |" >> "$GITHUB_STEP_SUMMARY"

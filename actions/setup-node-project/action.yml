@@ -1,0 +1,21 @@
+name: 'Setup Node Project'
+description: 'Configura Node.js con la versión especificada, restaura caché npm e instala dependencias'
+
+inputs:
+  node-version:
+    description: 'Versión de Node.js a instalar'
+    required: false
+    default: '22'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js ${{ inputs.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci
